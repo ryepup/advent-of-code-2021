@@ -95,3 +95,17 @@ func Part2(path string) (int, error) {
 
 	return countIncreases(groupDepths), nil
 }
+
+/*
+Misc learning notes from today:
+
+- you can pass go channels around as send/recv only types chan<- / <-chan
+- vscode go plugin is pretty good, lots of "do what I want" features already
+  with no extra config
+- defer is pretty sweet
+- channels can be used like C# IEnumerable or python yield, but you need to add
+  concurrency to do so and be careful about when you close the channel
+- a little surprised to have zero problems with closures or pointers
+- the stdlib seems a little bare bones, hoping I just haven't found what to
+  import yet
+*/
