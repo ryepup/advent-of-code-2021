@@ -40,14 +40,7 @@ func scan(path string) (<-chan int, error) {
 	return results, nil
 }
 
-// TODO: are there docstrings?
-// cribbed from https://stackoverflow.com/questions/8757389/reading-a-file-line-by-line-in-go
-func Part1(path string) (int, error) {
-	depths, err := scan(path)
-	if err != nil {
-		return 0, err
-	}
-
+func countIncreases(depths <-chan int) int {
 	lastDepth := <-depths
 	increases := 0
 
@@ -57,6 +50,48 @@ func Part1(path string) (int, error) {
 		}
 		lastDepth = depth
 	}
+	return increases
+}
 
-	return increases, nil
+// TODO: are there docstrings?
+// cribbed from https://stackoverflow.com/questions/8757389/reading-a-file-line-by-line-in-go
+func Part1(path string) (int, error) {
+	depths, err := scan(path)
+	if err != nil {
+		return 0, err
+	}
+
+	return countIncreases(depths), nil
+}
+
+// TODO: isn't this defined somewhere in the standard lib?!
+func sum(a []int) int {
+	n := 0
+	for _, x := range a {
+		n += x
+	}
+	return n
+}
+
+func Part2(path string) (int, error) {
+	depths, err := scan(path)
+	if err != nil {
+		return 0, err
+	}
+
+	groupDepths := make(chan int)
+	go func() {
+		defer close(groupDepths)
+		// first group
+		group := []int{<-depths, <-depths, <-depths}
+		groupDepths <- sum(group)
+
+		// rolling windows for the rest
+		for depth := range depths {
+			group = append(group[1:], depth)
+			groupDepths <- sum(group)
+		}
+	}()
+
+	return countIncreases(groupDepths), nil
 }

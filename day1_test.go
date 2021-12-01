@@ -27,3 +27,27 @@ func TestPart1RealInput(t *testing.T) {
 		t.Fatalf("Expected %v, got %v", 1292, n)
 	}
 }
+
+func TestPart2(t *testing.T) {
+	n, err := Part2("day1.part1.test.txt")
+	if err != nil {
+		t.Fatalf("error: %v", err)
+	}
+	if n != 5 {
+		t.Fatalf("Expected %v, got %v", 5, n)
+	}
+}
+
+// figuring out how slices/append works
+func TestSlicesAndAppend(t *testing.T) {
+	s := make([]int, 0, 3)
+	s = append(s, 1, 2, 3)
+
+	if !(s[0] == 1 && s[1] == 2 && s[2] == 3) {
+		t.Fatalf("Wrong contents %v", s)
+	}
+	s = append(s[1:], 4)
+	if !(s[0] == 2 && s[1] == 3 && s[2] == 4) {
+		t.Fatalf("Wrong contents %v", s)
+	}
+}
