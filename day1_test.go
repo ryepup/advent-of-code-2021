@@ -51,3 +51,13 @@ func TestSlicesAndAppend(t *testing.T) {
 		t.Fatalf("Wrong contents %v", s)
 	}
 }
+
+func TestPart2RealInput(t *testing.T) {
+	n, err := Part2("day1.part1.txt")
+	if err != nil {
+		t.Fatalf("error: %v", err)
+	}
+	if n != 1262 {
+		t.Fatalf("Expected %v, got %v", 1262, n)
+	}
+}
