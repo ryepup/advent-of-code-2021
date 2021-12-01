@@ -10,6 +10,7 @@ import (
 )
 
 // TODO: is there a better composable "stream" interface for reading / parsing?
+// cribbed from https://stackoverflow.com/questions/8757389/reading-a-file-line-by-line-in-go
 func scan(path string) (<-chan int, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -54,7 +55,6 @@ func countIncreases(depths <-chan int) int {
 }
 
 // TODO: are there docstrings?
-// cribbed from https://stackoverflow.com/questions/8757389/reading-a-file-line-by-line-in-go
 func Part1(path string) (int, error) {
 	depths, err := scan(path)
 	if err != nil {
