@@ -2,7 +2,6 @@ package day2
 
 import (
 	"fmt"
-	"log"
 	"ryepup/advent2021/utils"
 	"strconv"
 	"strings"
@@ -22,25 +21,22 @@ type command struct {
 	arg       int
 }
 
-func ParseCommands(path string) (<-chan command, error) {
+func ParseCommands(path string) ([]command, error) {
 	lines, err := utils.ReadLines(path)
 	if err != nil {
 		return nil, err
 	}
 
-	result := make(chan command)
-	go func() {
-		defer close(result)
-		for line := range lines {
-			cmd, err := parseCommand(line)
-			if err != nil {
-				log.Fatalf("Could not parse %s: %v", line, err)
-			}
-			result <- cmd
-		}
-	}()
+	results := make([]command, len(lines))
 
-	return result, nil
+	for i, line := range lines {
+		results[i], err = parseCommand(line)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return results, nil
 }
 
 func parseCommand(line string) (command, error) {

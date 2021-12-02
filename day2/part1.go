@@ -53,7 +53,7 @@ func Part1(path string) (int, error) {
 
 	position := 0
 	depth := 0
-	for cmd := range commands {
+	for _, cmd := range commands {
 		switch cmd.operation {
 		case Forward:
 			position += cmd.arg

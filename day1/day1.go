@@ -4,11 +4,11 @@ import (
 	"ryepup/advent2021/utils"
 )
 
-func countIncreases(depths <-chan int) int {
-	lastDepth := <-depths
+func countIncreases(depths []int) int {
+	lastDepth := depths[0]
 	increases := 0
 
-	for depth := range depths {
+	for _, depth := range depths[1:] {
 		if depth > lastDepth {
 			increases++
 		}
@@ -32,19 +32,15 @@ func Part2(path string) (int, error) {
 		return 0, err
 	}
 
-	groupDepths := make(chan int)
-	go func() {
-		defer close(groupDepths)
-		// first group
-		group := []int{<-depths, <-depths, <-depths}
-		groupDepths <- utils.SumInts(group)
+	groupDepths := make([]int, 0)
+	group := depths[:3]
+	groupDepths = append(groupDepths, utils.SumInts(group))
 
-		// rolling windows for the rest
-		for depth := range depths {
-			group = append(group[1:], depth)
-			groupDepths <- utils.SumInts(group)
-		}
-	}()
+	// rolling windows for the rest
+	for _, depth := range depths[3:] {
+		group = append(group[1:], depth)
+		groupDepths = append(groupDepths, utils.SumInts(group))
+	}
 
 	return countIncreases(groupDepths), nil
 }

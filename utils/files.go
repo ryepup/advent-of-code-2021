@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bufio"
-	"log"
 	"os"
 	"strconv"
 )
@@ -14,27 +13,22 @@ TODO: is there a better composable "stream" interface for reading / parsing?
 
 cribbed from https://stackoverflow.com/questions/8757389/reading-a-file-line-by-line-in-go
 */
-func ReadLines(path string) (<-chan string, error) {
+func ReadLines(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
-	// TODO: does returning a channel make sense, or is it better to pass one in?
-	results := make(chan string)
-	go func() {
-		defer file.Close()
-		defer close(results)
+	var results []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		results = append(results, scanner.Text())
+	}
 
-		scanner := bufio.NewScanner(file)
-		for scanner.Scan() {
-			results <- scanner.Text()
-		}
-
-		if err := scanner.Err(); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
 
 	return results, nil
 }
@@ -42,26 +36,17 @@ func ReadLines(path string) (<-chan string, error) {
 /*
 Read a file line-by-line and parses each line to an int
 */
-func ParseInts(path string) (<-chan int, error) {
+func ParseInts(path string) ([]int, error) {
 	lines, err := ReadLines(path)
 	if err != nil {
 		return nil, err
 	}
-	results := make(chan int)
-	go func() {
-		defer close(results)
-
-		for line := range lines {
-			// TODO: what's the right thing to do with errors in a channel
-			// producer?
-			n, err := strconv.Atoi(line)
-			if err != nil {
-				log.Fatalf("Could not parse %s: %v", line, err)
-			}
-			results <- n
+	results := make([]int, len(lines))
+	for i, line := range lines {
+		results[i], err = strconv.Atoi(line)
+		if err != nil {
+			return nil, err
 		}
-
-	}()
-
+	}
 	return results, nil
 }
