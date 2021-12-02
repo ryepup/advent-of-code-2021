@@ -1,4 +1,4 @@
-package adventofcode2021
+package day1
 
 import (
 	"testing"
