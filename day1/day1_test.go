@@ -1,6 +1,7 @@
-package day1
+package day1_test
 
 import (
+	. "ryepup/advent2021/day1"
 	"testing"
 )
 
@@ -10,7 +11,6 @@ func TestPart1(t *testing.T) {
 		t.Fatalf("error: %v", err)
 	}
 	if n != 7 {
-		// TODO: is there an assert.equals(7, n)?
 		t.Fatalf("Expected %v, got %v", 7, n)
 	}
 }

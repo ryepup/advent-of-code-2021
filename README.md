@@ -20,10 +20,18 @@ Uses a vscode devcontainer for dependencies.
 
 ### Day 2
 
-- every file in a folder is in the same package
+- ~~every file in a folder is in the same package~~ depends on the `package` declaration at the top of each file
 - PascalCase means "public"
 - docstrings go above the element, free form comment. Maybe there's a jsdoc equivalent?
 - organization hierarchy:
     1. git repo -> module
     2. subdirectories -> packages in a module
     3. files -> functions/types in a package
+- tests can live next to the code being tested, but add a `_test` suffix on the
+  package to prevent exporting the tests with the rest of the package
+- [`Example*` tests](https://pkg.go.dev/testing#hdr-Examples) exist, and seem to
+  satisify my want for something like `Assert.AreEqual`
+- you can import symbols from one package into yours with `import . "other"`,
+  good for testing but seems iffy elsewhere; basically a pythong `from x import *`
+- wow, error propagation is really a thing
+- vscode linter is giving some good stuff, e.g. `errors.New(fmt.Sprintf("bad: %v", x))` to `fmt.Errorf("bad: %v", x)`
