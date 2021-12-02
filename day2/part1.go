@@ -3,9 +3,6 @@ package day2
 
 import (
 	"fmt"
-	"ryepup/advent2021/utils"
-	"strconv"
-	"strings"
 )
 
 /*
@@ -49,67 +46,25 @@ planned course. What do you get if you multiply your final horizontal position
 by your final depth?
 */
 func Part1(path string) (int, error) {
-	lines, err := utils.ReadLines(path)
+	commands, err := ParseCommands(path)
 	if err != nil {
 		return 0, err
 	}
 
 	position := 0
 	depth := 0
-	for line := range lines {
-		op, n, err := parseLine(line)
-		if err != nil {
-			return 0, err
-		}
-		switch op {
-		case forward:
-			position += n
-		case up:
-			depth -= n
-		case down:
-			depth += n
+	for cmd := range commands {
+		switch cmd.operation {
+		case Forward:
+			position += cmd.arg
+		case Up:
+			depth -= cmd.arg
+		case Down:
+			depth += cmd.arg
 		default:
-			return 0, fmt.Errorf("unknown operation %v", op)
+			return 0, fmt.Errorf("unknown operation %v", cmd.operation)
 		}
 	}
 
 	return position * depth, nil
-}
-
-type operation int
-
-const (
-	none operation = iota
-	forward
-	down
-	up
-)
-
-func parseOperation(s string) (operation, error) {
-	switch s {
-	case "forward":
-		return forward, nil
-	case "down":
-		return down, nil
-	case "up":
-		return up, nil
-	}
-	return none, fmt.Errorf("could not parse %s", s)
-}
-
-// parse the instruction
-func parseLine(line string) (operation, int, error) {
-	bits := strings.Split(line, " ")
-	if len(bits) != 2 {
-		return none, 0, fmt.Errorf("expected two elements in the line, found %v", bits)
-	}
-	op, err := parseOperation(bits[0])
-	if err != nil {
-		return none, 0, err
-	}
-	n, err := strconv.Atoi(bits[1])
-	if err != nil {
-		return none, 0, err
-	}
-	return op, n, nil
 }
