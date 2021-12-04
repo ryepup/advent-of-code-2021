@@ -43,3 +43,24 @@ Uses a vscode devcontainer for dependencies.
 - wow, error propagation is really a thing
 - vscode linter is giving some good stuff, e.g. `errors.New(fmt.Sprintf("bad: %v", x))` to `fmt.Errorf("bad: %v", x)`
 - enums exist, kinda odd to hang out as bare global symbols
+
+### Day 3
+
+- external libs are easy, `go.sum` is a lock file and it's nice that `go.mod`
+  shows all the indirect dependencies. Would be very obvious if you fall into
+  npm-style thousands of deps
+- there's no direct
+  [devDependencies](https://docs.npmjs.com/specifying-dependencies-and-devdependencies-in-a-package-json-file)
+  equivalent, but there's [module graph
+  pruning](https://go.dev/ref/mod#graph-pruning) so consumers of a library will
+  only download modules that their code depends on - this might be a good reason
+  to put tests in a different package
+- type definitions are nice, there's something really subtle there with type
+  definitions (`type meters int`) vs type aliases (`type meters = int`). aliases
+  don't create a new type (i.e. [Rust
+  `newtype`](https://doc.rust-lang.org/rust-by-example/generics/new_types.html));
+  the compiler will be happy assigning any `int` to a `meters`. Seems like a
+  nice way to get some compiler guarantees on correctness.
+- `make` can handle user-defined array types
+- I think golang wants me to stop thinking too much
+
