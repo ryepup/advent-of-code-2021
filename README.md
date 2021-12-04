@@ -64,3 +64,21 @@ Uses a vscode devcontainer for dependencies.
 - `make` can handle user-defined array types
 - I think golang wants me to stop thinking too much
 
+### Day 4
+
+- mutable data wants to be a pointer; there is more default immutability via
+  implicit copies than I realized. This can get a little weird; for a while I
+  was copying an array of pointers, and mutating the structs being pointed at. I
+  can reduce memory by passing around a pointer to my array
+- vscode plugin has some profiling features via `pprof`, but the tests run fast
+  enough that I don't get much data. The profiler runs as an http server in my
+  go process, and it's allocation/cpu dwarfs what my stupid code does
+- `pprof` uses graphviz, which is nice to see in the wild
+- still feeling the lack of map/filter/reduce, but the use cases are all just
+  different enough that I didn't write a `map` helper. In the long run that
+  probably saves a lot of computation; allocating lambdas, etc
+- OO style still feels kinda wrong in golang. I'm used to starting with an
+  interface to work out the shape of the solution, and then jump into
+  implementation, ending with a lot of interfaces with only one implementation. in golang it seems like dropping the interface is a better approach.
+- labels on for loops are a nice way to reduce accounting, but seems like it
+  could get iffy fast
