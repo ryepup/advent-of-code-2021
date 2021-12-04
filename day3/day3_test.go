@@ -24,3 +24,9 @@ func TestPart2(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 230, n)
 }
+
+func TestPart2_input(t *testing.T) {
+	n, err := Part2("input.txt")
+	assert.Nil(t, err)
+	assert.Equal(t, 2981085, n)
+}
