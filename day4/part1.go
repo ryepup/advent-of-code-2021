@@ -103,13 +103,11 @@ func Part1(path string) (int, error) {
 
 const BINGO_BOARD_SIZE = 5
 
-type bingoBoard struct {
-	squares [][]*bingoSquare
-}
+type bingoBoard [BINGO_BOARD_SIZE][BINGO_BOARD_SIZE]*bingoSquare
 
 func (t bingoBoard) String() string {
 	var builder strings.Builder
-	for _, row := range t.squares {
+	for _, row := range t {
 		for _, square := range row {
 			builder.WriteString(fmt.Sprint(square))
 		}
@@ -132,7 +130,7 @@ func (t bingoSquare) String() string {
 }
 
 func (board *bingoBoard) mark(number int) bool {
-	for _, row := range board.squares {
+	for _, row := range board {
 		for _, square := range row {
 			if square.number == number {
 				square.marked = true
@@ -148,7 +146,7 @@ func (board *bingoBoard) isWinner() bool {
 
 func (board *bingoBoard) hasMarkedRow() bool {
 OUTER:
-	for _, row := range board.squares {
+	for _, row := range board {
 		for _, square := range row {
 			if !square.marked {
 				continue OUTER
@@ -164,7 +162,7 @@ func (board *bingoBoard) hasMarkedColumn() bool {
 OUTER:
 	for col := 0; col < BINGO_BOARD_SIZE; col++ {
 		for row := 0; row < BINGO_BOARD_SIZE; row++ {
-			square := board.squares[row][col]
+			square := board[row][col]
 			if !square.marked {
 				continue OUTER
 			}
@@ -177,7 +175,7 @@ OUTER:
 
 func (board *bingoBoard) score() int {
 	score := 0
-	for _, row := range board.squares {
+	for _, row := range board {
 		for _, square := range row {
 			if !square.marked {
 				score += square.number
@@ -192,19 +190,18 @@ func parseBoard(lines []string) (*bingoBoard, error) {
 		return nil, fmt.Errorf("boards want %v lines", BINGO_BOARD_SIZE)
 	}
 
-	squares := make([][]*bingoSquare, BINGO_BOARD_SIZE)
+	board := bingoBoard{}
 	for i, line := range lines {
 		nums, err := parseNumbers(strings.Fields(line))
 		if err != nil {
 			return nil, err
 		}
-		squares[i] = make([]*bingoSquare, BINGO_BOARD_SIZE)
 		for j, n := range nums {
-			squares[i][j] = &bingoSquare{number: n, marked: false}
+			board[i][j] = &bingoSquare{number: n, marked: false}
 		}
 	}
 
-	return &bingoBoard{squares}, nil
+	return &board, nil
 }
 
 func parseNumbers(raw []string) ([]int, error) {
