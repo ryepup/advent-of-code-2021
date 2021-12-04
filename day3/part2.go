@@ -119,9 +119,7 @@ func parseLine(line string) []bool {
 }
 
 func findMostPopular(readings [][]bool, position int) bool {
-	votes := make(map[bool]int)
-	votes[true] = 0
-	votes[false] = 0
+	votes := map[bool]int{true: 0, false: 0}
 	for _, reading := range readings {
 		votes[reading[position]]++
 	}
