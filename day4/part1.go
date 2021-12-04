@@ -84,21 +84,13 @@ To guarantee victory against the giant squid, figure out which board will win
 first. What will your final score be if you choose that board?
 */
 func Part1(path string) (int, error) {
-	lines, err := utils.ReadLines(path)
-	if err != nil {
-		return 0, err
-	}
-	numbers, err := parseNumbers(strings.Split(lines[0], ","))
-	if err != nil {
-		return 0, err
-	}
-	boards, err := parseBoards(lines[1:])
+	bingo, err := parseBingo(path)
 	if err != nil {
 		return 0, err
 	}
 
-	for _, n := range numbers {
-		for _, b := range boards {
+	for _, n := range bingo.numbers {
+		for _, b := range bingo.boards {
 			if b.mark(n) {
 				fmt.Println(b)
 				return n * b.score(), nil
@@ -245,4 +237,25 @@ func parseBoards(lines []string) ([]*bingoBoard, error) {
 		}
 	}
 	return boards, nil
+}
+
+type bingo struct {
+	numbers []int
+	boards  []*bingoBoard
+}
+
+func parseBingo(path string) (*bingo, error) {
+	lines, err := utils.ReadLines(path)
+	if err != nil {
+		return nil, err
+	}
+	numbers, err := parseNumbers(strings.Split(lines[0], ","))
+	if err != nil {
+		return nil, err
+	}
+	boards, err := parseBoards(lines[1:])
+	if err != nil {
+		return nil, err
+	}
+	return &bingo{numbers, boards}, nil
 }
