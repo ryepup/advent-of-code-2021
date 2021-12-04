@@ -1,7 +1,6 @@
 package day3
 
 import (
-	"math"
 	"ryepup/advent2021/utils"
 )
 
@@ -79,7 +78,7 @@ func Part1(path string) (int, error) {
 	gamma := 0
 	epsilon := 0
 	for i := 0; i < width; i++ {
-		factor := int(math.Pow(2, float64(i)))
+		factor := 1 << i
 		if columnSums[width-i-1] > majority {
 			gamma += factor
 		} else {

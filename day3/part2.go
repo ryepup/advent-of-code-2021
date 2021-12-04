@@ -2,7 +2,6 @@ package day3
 
 import (
 	"errors"
-	"math"
 	"ryepup/advent2021/utils"
 )
 
@@ -161,8 +160,7 @@ func asInt(reading reading) int {
 	result := 0
 	for i, x := range reading {
 		if x {
-			factor := int(math.Pow(2, float64(len(reading)-i-1)))
-			result += factor
+			result += 1 << (len(reading) - i - 1)
 		}
 	}
 	return result
