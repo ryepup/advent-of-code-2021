@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPart1(t *testing.T) {
+func TestPart1_test(t *testing.T) {
 	n, err := Part1("test.txt")
 	assert.Nil(t, err)
 	assert.Equal(t, 4512, n)
