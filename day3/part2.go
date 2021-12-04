@@ -82,11 +82,11 @@ func Part2(path string) (int, error) {
 		return 0, err
 	}
 
-	oxygen, err := findOxygen(readings)
+	oxygen, err := findRating(readings, mostPopular)
 	if err != nil {
 		return 0, err
 	}
-	co2, err := findCO2(readings)
+	co2, err := findRating(readings, leastPopular)
 	if err != nil {
 		return 0, err
 	}
@@ -118,12 +118,16 @@ func parseLine(line string) []bool {
 	return results
 }
 
-func findMostPopular(readings [][]bool, position int) bool {
+func mostPopular(readings [][]bool, position int) bool {
 	votes := map[bool]int{true: 0, false: 0}
 	for _, reading := range readings {
 		votes[reading[position]]++
 	}
 	return votes[true] >= votes[false]
+}
+
+func leastPopular(readings [][]bool, position int) bool {
+	return !mostPopular(readings, position)
 }
 
 func filter(readings [][]bool, position int, value bool) [][]bool {
@@ -136,26 +140,12 @@ func filter(readings [][]bool, position int, value bool) [][]bool {
 	return results
 }
 
-func findOxygen(readings [][]bool) ([]bool, error) {
+func findRating(readings [][]bool, metric func([][]bool, int) bool) ([]bool, error) {
 	width := len(readings[0])
 	candidates := readings
 	for i := 0; i < width; i++ {
-		popular := findMostPopular(candidates, i)
-		candidates = filter(candidates, i, popular)
-		if len(candidates) == 1 {
-			return candidates[0], nil
-		}
-
-	}
-	return nil, errors.New("could not find a single winner")
-}
-
-func findCO2(readings [][]bool) ([]bool, error) {
-	width := len(readings[0])
-	candidates := readings
-	for i := 0; i < width; i++ {
-		popular := findMostPopular(candidates, i)
-		candidates = filter(candidates, i, !popular)
+		value := metric(candidates, i)
+		candidates = filter(candidates, i, value)
 		if len(candidates) == 1 {
 			return candidates[0], nil
 		}
