@@ -94,20 +94,23 @@ func Part2(path string) (int, error) {
 	return asInt(oxygen) * asInt(co2), nil
 }
 
-func parseFile(path string) ([][]bool, error) {
+type reading []bool
+type report []reading
+
+func parseFile(path string) (report, error) {
 	lines, err := utils.ReadLines(path)
 	if err != nil {
 		return nil, err
 	}
-	results := make([][]bool, len(lines))
+	results := make(report, len(lines))
 	for i, line := range lines {
 		results[i] = parseLine(line)
 	}
 	return results, nil
 }
 
-func parseLine(line string) []bool {
-	results := make([]bool, len(line))
+func parseLine(line string) reading {
+	results := make(reading, len(line))
 	for i, c := range line {
 		if c == '1' {
 			results[i] = true
@@ -118,7 +121,7 @@ func parseLine(line string) []bool {
 	return results
 }
 
-func mostPopular(readings [][]bool, position int) bool {
+func mostPopular(readings report, position int) bool {
 	votes := map[bool]int{true: 0, false: 0}
 	for _, reading := range readings {
 		votes[reading[position]]++
@@ -126,12 +129,12 @@ func mostPopular(readings [][]bool, position int) bool {
 	return votes[true] >= votes[false]
 }
 
-func leastPopular(readings [][]bool, position int) bool {
+func leastPopular(readings report, position int) bool {
 	return !mostPopular(readings, position)
 }
 
-func filter(readings [][]bool, position int, value bool) [][]bool {
-	results := make([][]bool, 0)
+func filter(readings report, position int, value bool) report {
+	results := make(report, 0)
 	for _, reading := range readings {
 		if reading[position] == value {
 			results = append(results, reading)
@@ -140,7 +143,7 @@ func filter(readings [][]bool, position int, value bool) [][]bool {
 	return results
 }
 
-func findRating(readings [][]bool, metric func([][]bool, int) bool) ([]bool, error) {
+func findRating(readings report, metric func(report, int) bool) (reading, error) {
 	width := len(readings[0])
 	candidates := readings
 	for i := 0; i < width; i++ {
@@ -154,7 +157,7 @@ func findRating(readings [][]bool, metric func([][]bool, int) bool) ([]bool, err
 	return nil, errors.New("could not find a single winner")
 }
 
-func asInt(reading []bool) int {
+func asInt(reading reading) int {
 	result := 0
 	for i, x := range reading {
 		if x {
