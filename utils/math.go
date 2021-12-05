@@ -36,3 +36,11 @@ func MaxInt(numbers ...int) int {
 	}
 	return winner
 }
+
+func AbsInt(n int) int {
+	if n < 0 {
+		return n * -1
+	} else {
+		return n
+	}
+}

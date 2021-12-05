@@ -7,8 +7,8 @@ import (
 )
 
 type vent struct {
-	start, end               point
-	IsHorizontal, IsVertical bool
+	start, end                           point
+	IsHorizontal, IsVertical, IsDiagonal bool
 }
 
 func (v vent) String() string {
@@ -17,10 +17,11 @@ func (v vent) String() string {
 
 func NewVent(x1, y1, x2, y2 int) vent {
 	return vent{
-		start:        point{x: x1, y: y1},
-		end:          point{x: x2, y: y2},
+		start:        NewPoint(x1, y1),
+		end:          NewPoint(x2, y2),
 		IsHorizontal: y1 == y2,
 		IsVertical:   x1 == x2,
+		IsDiagonal:   utils.AbsInt(x2-x1) == utils.AbsInt(y2-y1),
 	}
 }
 
@@ -30,19 +31,33 @@ returns the points in the path of this vent
 func (v vent) Path() []point {
 	results := []point{v.start}
 
+	minX := utils.MinInt(v.start.x, v.end.x)
+	maxX := utils.MaxInt(v.start.x, v.end.x)
+	minY := utils.MinInt(v.start.y, v.end.y)
+	maxY := utils.MaxInt(v.start.y, v.end.y)
+
 	if v.IsHorizontal {
 		y := v.start.y
-		minX := utils.MinInt(v.start.x, v.end.x)
-		maxX := utils.MaxInt(v.start.x, v.end.x)
 		for x := minX + 1; x < maxX; x++ {
 			results = append(results, point{x, y})
 		}
 	} else if v.IsVertical {
 		x := v.start.x
-		minY := utils.MinInt(v.start.y, v.end.y)
-		maxY := utils.MaxInt(v.start.y, v.end.y)
 		for y := minY + 1; y < maxY; y++ {
 			results = append(results, point{x, y})
+		}
+	} else if v.IsDiagonal {
+		length := utils.AbsInt(v.end.x - v.start.x)
+		xf := 1
+		yf := 1
+		if v.end.x < v.start.x {
+			xf = -1
+		}
+		if v.end.y < v.start.y {
+			yf = -1
+		}
+		for i := 1; i < length; i++ {
+			results = append(results, point{v.start.x + (i * xf), v.start.y + (i * yf)})
 		}
 	}
 	return append(results, v.end)
@@ -52,6 +67,10 @@ type point struct{ x, y int }
 
 func (p point) String() string {
 	return fmt.Sprintf("%v,%v", p.x, p.y)
+}
+
+func NewPoint(x, y int) point {
+	return point{x, y}
 }
 
 /*
@@ -90,4 +109,14 @@ func ParseVent(line string) (vent, error) {
 		return vent{}, err
 	}
 	return NewVent(values[0], values[1], values[2], values[3]), nil
+}
+
+func filterVent(vents []vent, predicate func(vent) bool) []vent {
+	results := make([]vent, 0)
+	for _, vent := range vents {
+		if predicate(vent) {
+			results = append(results, vent)
+		}
+	}
+	return results
 }

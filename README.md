@@ -95,3 +95,7 @@ Uses a vscode devcontainer for dependencies.
     1. put the tests in the package (potentially making test libs a runtime dep
       for library consumers)
     1. make it public in a special [`internal` package](https://go.dev/doc/go1.4#internalpackages)
+
+- tests have naming conventions to match up the test with the code being tested
+- no ternary operator, "clever" workarounds feels worse than if/else
+- stdlib is a little bare bones; feels pretty silly writing `abs` functions

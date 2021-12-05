@@ -1,5 +1,10 @@
 package day5
 
+import (
+	"fmt"
+	"strings"
+)
+
 /*
 You come across a field of hydrothermal vents on the ocean floor! These vents
 constantly produce large, opaque clouds, so it would be best to avoid them if
@@ -58,20 +63,22 @@ Consider only horizontal and vertical lines. At how many points do at least two
 lines overlap?
 */
 func Part1(path string) (int, error) {
+	pred := func(v vent) bool {
+		return v.IsHorizontal || v.IsVertical
+	}
+	return countOverlaps(path, pred)
+}
+
+func countOverlaps(path string, predicate func(vent) bool) (int, error) {
 	vents, err := parseVents(path)
 	if err != nil {
 		return 0, err
 	}
 
-	tracks := make(map[point]int)
+	vents = filterVent(vents, predicate)
+	tracks := findTracks(vents)
 
-	for _, vent := range vents {
-		if vent.IsHorizontal || vent.IsVertical {
-			for _, point := range vent.Path() {
-				tracks[point]++
-			}
-		}
-	}
+	//fmt.Println(tracks)
 
 	overlaps := 0
 	for _, v := range tracks {
@@ -81,4 +88,44 @@ func Part1(path string) (int, error) {
 	}
 
 	return overlaps, nil
+}
+
+type tracks map[point]int
+
+func findTracks(vents []vent) tracks {
+	tracks := make(tracks)
+
+	for _, vent := range vents {
+		for _, point := range vent.Path() {
+			tracks[point]++
+		}
+	}
+	return tracks
+}
+
+func (t tracks) String() string {
+	maxX, maxY := 0, 0
+	var builder strings.Builder
+	for p := range t {
+		if p.x > maxX {
+			maxX = p.x
+		}
+		if p.y > maxY {
+			maxY = p.y
+		}
+	}
+	for y := 0; y <= maxY; y++ {
+		for x := 0; x <= maxX; x++ {
+			p := NewPoint(x, y)
+			count := t[p]
+			if count == 0 {
+				builder.WriteString(".")
+			} else {
+				builder.WriteString(fmt.Sprintf("%v", count))
+			}
+
+		}
+		builder.WriteString("\n")
+	}
+	return builder.String()
 }
