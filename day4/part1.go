@@ -3,7 +3,6 @@ package day4
 import (
 	"fmt"
 	"ryepup/advent2021/utils"
-	"strconv"
 	"strings"
 )
 
@@ -192,7 +191,7 @@ func parseBoard(lines []string) (*bingoBoard, error) {
 
 	board := bingoBoard{}
 	for i, line := range lines {
-		nums, err := parseNumbers(strings.Fields(line))
+		nums, err := utils.ParseNumbers(strings.Fields(line))
 		if err != nil {
 			return nil, err
 		}
@@ -202,18 +201,6 @@ func parseBoard(lines []string) (*bingoBoard, error) {
 	}
 
 	return &board, nil
-}
-
-func parseNumbers(raw []string) ([]int, error) {
-	results := make([]int, len(raw))
-	for i, s := range raw {
-		n, err := strconv.Atoi(s)
-		if err != nil {
-			return nil, err
-		}
-		results[i] = n
-	}
-	return results, nil
 }
 
 func parseBoards(lines []string) ([]*bingoBoard, error) {
@@ -246,7 +233,7 @@ func parseBingo(path string) (*bingo, error) {
 	if err != nil {
 		return nil, err
 	}
-	numbers, err := parseNumbers(strings.Split(lines[0], ","))
+	numbers, err := utils.ParseNumbers(strings.Split(lines[0], ","))
 	if err != nil {
 		return nil, err
 	}

@@ -18,7 +18,7 @@ func countIncreases(depths []int) int {
 }
 
 func Part1(path string) (int, error) {
-	depths, err := utils.ParseInts(path)
+	depths, err := utils.ReadInts(path)
 	if err != nil {
 		return 0, err
 	}
@@ -27,7 +27,7 @@ func Part1(path string) (int, error) {
 }
 
 func Part2(path string) (int, error) {
-	depths, err := utils.ParseInts(path)
+	depths, err := utils.ReadInts(path)
 	if err != nil {
 		return 0, err
 	}
