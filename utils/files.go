@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"os"
-	"strconv"
 )
 
 /*
@@ -36,17 +35,14 @@ func ReadLines(path string) ([]string, error) {
 /*
 Read a file line-by-line and parses each line to an int
 */
-func ParseInts(path string) ([]int, error) {
+func ReadInts(path string) ([]int, error) {
 	lines, err := ReadLines(path)
 	if err != nil {
 		return nil, err
 	}
-	results := make([]int, len(lines))
-	for i, line := range lines {
-		results[i], err = strconv.Atoi(line)
-		if err != nil {
-			return nil, err
-		}
+	results, err := ParseNumbers(lines)
+	if err != nil {
+		return nil, err
 	}
 	return results, nil
 }
