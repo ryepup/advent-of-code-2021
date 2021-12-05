@@ -82,3 +82,16 @@ Uses a vscode devcontainer for dependencies.
   implementation, ending with a lot of interfaces with only one implementation. in golang it seems like dropping the interface is a better approach.
 - labels on for loops are a nice way to reduce accounting, but seems like it
   could get iffy fast
+
+### Day 5
+
+- raw strings exist! perfect for regex
+- struct equality is nice, mostly DWIM for basic things
+- default zero values are a little magical; can write less code, but why it
+  works is a little less clear without a "everything starts empty" mindset
+- symbol visibility for tests is still a thing, a few options:
+
+    1. make it public for fine-grained testing
+    1. put the tests in the package (potentially making test libs a runtime dep
+      for library consumers)
+    1. make it public in a special [`internal` package](https://go.dev/doc/go1.4#internalpackages)

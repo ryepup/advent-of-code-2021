@@ -14,3 +14,25 @@ func SumInts(a []int) int {
 	}
 	return n
 }
+
+// builtin math.Min is all float64s
+func MinInt(numbers ...int) int {
+	winner := numbers[0]
+	for _, n := range numbers[1:] {
+		if n < winner {
+			winner = n
+		}
+	}
+	return winner
+}
+
+// builtin math.Max is all float64s
+func MaxInt(numbers ...int) int {
+	winner := numbers[0]
+	for _, n := range numbers[1:] {
+		if n > winner {
+			winner = n
+		}
+	}
+	return winner
+}
