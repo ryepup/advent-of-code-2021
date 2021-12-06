@@ -21,31 +21,14 @@ func main() {
 	}
 	os.Chdir(dir)
 
-	writeTemplate(
-		day,
-		fmt.Sprintf("day%v_test.go", day),
-		"test",
-		day)
-
-	for _, part := range []int{1, 2} {
-		writeTemplate(
-			day,
-			fmt.Sprintf("part%v.go", part),
-			"part",
-			struct{ Day, Part int }{day, part})
-	}
-
-	err = os.WriteFile("test.txt", []byte("TODO: copy in test input\n"), 0644)
-	if err != nil {
-		panic(err)
-	}
-	err = os.WriteFile("input.txt", []byte("TODO: copy in real input\n"), 0644)
-	if err != nil {
-		panic(err)
-	}
+	writeTemplate("day_test.go", "test", day)
+	writeTemplate("part1.go", "part", struct{ Day, Part int }{day, 1})
+	writeTemplate("part2.go", "part", struct{ Day, Part int }{day, 2})
+	writeTemplate("test.txt", "input", "test")
+	writeTemplate("input.txt", "input", "real")
 }
 
-func writeTemplate(day int, filename, template string, data interface{}) {
+func writeTemplate(filename, template string, data interface{}) {
 	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
 	if err != nil {
 		if os.IsExist(err) {
@@ -98,5 +81,8 @@ TODO: copy in problem definition
 func Part{{.Part}}(path string) (int, error) {
 	return 0, fmt.Errorf("not implemented")
 }
+{{end}}
+{{define "input" -}}
+// TODO: copy in {{.}} input
 {{end}}
 	`))
