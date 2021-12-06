@@ -34,27 +34,39 @@ func main() {
 			"part",
 			struct{ Day, Part int }{day, part})
 	}
-	os.WriteFile("test.txt", []byte("TODO: copy in test input\n"), 0644)
-	os.WriteFile("input.txt", []byte("TODO: copy in real input\n"), 0644)
+
+	err = os.WriteFile("test.txt", []byte("TODO: copy in test input\n"), 0644)
+	if err != nil {
+		panic(err)
+	}
+	err = os.WriteFile("input.txt", []byte("TODO: copy in real input\n"), 0644)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func writeTemplate(day int, filename, template string, data interface{}) {
-	f, err := os.Create(filename)
+	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
 	if err != nil {
+		if os.IsExist(err) {
+			fmt.Printf("Skipping existing file %v\n", filename)
+			return
+		}
 		panic(err)
 	}
 	defer f.Close()
 	tmpl.ExecuteTemplate(f, template, data)
-
 }
 
 var tmpl = template.Must(template.New("advent").Parse(`
 {{define "testfn" -}}
 func TestPart{{.}}(t *testing.T) {
-	// TODO: fill in expected values
 	testCases := map[string]int{"test.txt": -1, "input.txt": -1}
 	for path, expected := range testCases {
 		t.Run(path, func(t *testing.T) {
+			if expected == -1 {
+				t.Skip("TODO: provide an expected value")
+			}
 			n, err := Part1(path)
 			require.Nil(t, err)
 			require.Equal(t, expected, n)
@@ -75,7 +87,7 @@ import (
 {{ template "testfn" 1 }}
 {{ template "testfn" 2 }}
 {{- end}}
-{{define "part"}}
+{{define "part" -}}
 package day{{.Day}}
 
 import "fmt"
