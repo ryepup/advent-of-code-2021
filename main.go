@@ -67,7 +67,7 @@ func TestPart{{.}}(t *testing.T) {
 			if expected == -1 {
 				t.Skip("TODO: provide an expected value")
 			}
-			n, err := Part1(path)
+			n, err := Part{{.}}(path)
 			require.Nil(t, err)
 			require.Equal(t, expected, n)
 		})
