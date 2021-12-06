@@ -1,0 +1,11 @@
+
+package day6
+
+import "fmt"
+
+/*
+TODO: copy in problem definition
+*/
+func Part1(path string) (int, error) {
+	return 0, fmt.Errorf("not implemented")
+}
