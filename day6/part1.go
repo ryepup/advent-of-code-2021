@@ -1,6 +1,9 @@
 package day6
 
-import "fmt"
+import (
+	"ryepup/advent2021/utils"
+	"strings"
+)
 
 /*
 The sea floor is getting steeper. Maybe the sleigh keys got carried this way?
@@ -75,5 +78,55 @@ Find a way to simulate lanternfish. How many lanternfish would there be after 80
 days?
 */
 func Part1(path string) (int, error) {
-	return 0, fmt.Errorf("not implemented")
+	population, err := parseFish(path)
+	if err != nil {
+		return 0, err
+	}
+
+	for i := 0; i < 80; i++ {
+		newFish := make([]*lanternfish, 0)
+		for _, fish := range population {
+			if fish.tick() {
+				newFish = append(newFish, NewFish())
+			}
+		}
+		population = append(population, newFish...)
+	}
+
+	return len(population), nil
+
+}
+
+type lanternfish struct {
+	age int
+}
+
+// run a simulation step for this fish, returns true if another fish should be spawned
+func (f *lanternfish) tick() bool {
+	if f.age == 0 {
+		f.age = 6
+		return true
+	}
+	f.age--
+	return false
+}
+
+func NewFish() *lanternfish {
+	return &lanternfish{8}
+}
+
+func parseFish(path string) ([]*lanternfish, error) {
+	lines, err := utils.ReadLines(path)
+	if err != nil {
+		return nil, err
+	}
+	ages, err := utils.ParseNumbers(strings.Split(lines[0], ","))
+	if err != nil {
+		return nil, err
+	}
+	results := make([]*lanternfish, len(ages))
+	for i, age := range ages {
+		results[i] = &lanternfish{age}
+	}
+	return results, nil
 }
