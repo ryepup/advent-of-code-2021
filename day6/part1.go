@@ -78,44 +78,45 @@ Find a way to simulate lanternfish. How many lanternfish would there be after 80
 days?
 */
 func Part1(path string) (int, error) {
-	population, err := parseFish(path)
+	return runFishSim(path, 80)
+}
+
+/*
+store population as a map of age -> # of fish
+
+Modeling as individual objects took too much memory
+*/
+type population map[int]int
+
+func runFishSim(path string, steps int) (int, error) {
+	fishies, err := parseFish(path)
 	if err != nil {
 		return 0, err
 	}
 
-	for i := 0; i < 80; i++ {
-		newFish := make([]*lanternfish, 0)
-		for _, fish := range population {
-			if fish.tick() {
-				newFish = append(newFish, NewFish())
+	for i := 0; i < steps; i++ {
+		nextPopulation := make(population)
+
+		for age, fish := range fishies {
+			if age == 0 {
+				nextPopulation[6] += fish
+				nextPopulation[8] += fish
+			} else {
+				nextPopulation[age-1] += fish
 			}
 		}
-		population = append(population, newFish...)
+		fishies = nextPopulation
 	}
 
-	return len(population), nil
-
-}
-
-type lanternfish struct {
-	age int
-}
-
-// run a simulation step for this fish, returns true if another fish should be spawned
-func (f *lanternfish) tick() bool {
-	if f.age == 0 {
-		f.age = 6
-		return true
+	total := 0
+	for _, fish := range fishies {
+		total += fish
 	}
-	f.age--
-	return false
+
+	return total, nil
 }
 
-func NewFish() *lanternfish {
-	return &lanternfish{8}
-}
-
-func parseFish(path string) ([]*lanternfish, error) {
+func parseFish(path string) (population, error) {
 	lines, err := utils.ReadLines(path)
 	if err != nil {
 		return nil, err
@@ -124,9 +125,9 @@ func parseFish(path string) ([]*lanternfish, error) {
 	if err != nil {
 		return nil, err
 	}
-	results := make([]*lanternfish, len(ages))
-	for i, age := range ages {
-		results[i] = &lanternfish{age}
+	results := make(population)
+	for _, age := range ages {
+		results[age]++
 	}
 	return results, nil
 }
