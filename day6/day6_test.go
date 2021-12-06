@@ -8,7 +8,7 @@ import (
 )
 
 func TestPart1(t *testing.T) {
-	testCases := map[string]int{"test.txt": -1, "input.txt": -1}
+	testCases := map[string]int{"test.txt": 5934, "input.txt": -1}
 	for path, expected := range testCases {
 		t.Run(path, func(t *testing.T) {
 			if expected == -1 {
