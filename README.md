@@ -99,3 +99,21 @@ Uses a vscode devcontainer for dependencies.
 - tests have naming conventions to match up the test with the code being tested
 - no ternary operator, "clever" workarounds feels worse than if/else
 - stdlib is a little bare bones; feels pretty silly writing `abs` functions
+
+### Day 6
+
+- went down a rabbithole of scaffolding to get some practice with IO and
+  templating (inspired by @smsutherland, might port some of his work w/
+  downloading inputs later)
+- managing newlines in templates is a PITA
+- data-driven tests are nice, but error reporting gets a little worse (thanks
+  @unwashedmeme)
+- `assert` doesn't actually stop the run, but `require` does; this might be nice
+  if there are multiple things that could go wrong and want to see all the
+  errors in one test run. (thanks @unwashedmeme)
+- I'm used to trying to write declarative code to focus on the "what" more than
+  the "how". Feels like golang wants me to stay thinking about the "how", and
+  just give enough primitives that the "how" also feels simple/obvious. There
+  were a few times I wanted something like `sum(map.Values())` and ended up with
+  a `for` loop. Writing a `.Values` function can't be done generically (yet!),
+  and isn't really worth writing over the obvious `for` loop. If it were there I'd use it, but adding it doesn't feel right
