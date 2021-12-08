@@ -1,6 +1,10 @@
 package day8
 
-import "fmt"
+import (
+	"fmt"
+	"ryepup/advent2021/utils"
+	"strings"
+)
 
 /*
 You barely reach the safety of the cave when the whale smashes into the cave
@@ -109,5 +113,75 @@ segments (highlighted above).
 In the output values, how many times do digits 1, 4, 7, or 8 appear?
 */
 func Part1(path string) (int, error) {
-	return 0, fmt.Errorf("not implemented")
+	entries, err := parseEntries(path)
+	if err != nil {
+		return 0, err
+	}
+
+	occurences := 0
+	for _, entry := range entries {
+		for _, segment := range entry.segments {
+			_, hasKey := segmentDigits[len(segment)]
+			if hasKey {
+				occurences++
+			}
+		}
+
+	}
+
+	return occurences, nil
+}
+
+// map of how many segments are active to what digit it is
+var segmentDigits = map[int]int{2: 1, 3: 7, 4: 4, 7: 8}
+
+type signalPattern string
+type segmentPattern string
+type entry struct {
+	signals  []signalPattern
+	segments []segmentPattern
+}
+
+func parseEntries(path string) ([]entry, error) {
+	lines, err := utils.ReadLines(path)
+	if err != nil {
+		return nil, err
+	}
+	results := make([]entry, len(lines))
+	for i, line := range lines {
+		results[i], err = parseEntry(line)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return results, nil
+}
+
+func parseEntry(line string) (entry, error) {
+	parts := strings.Split(line, "|")
+	if len(parts) != 2 {
+		return entry{}, fmt.Errorf("expected only one `|`, got %v", line)
+	}
+	signals := asSignalPattern(strings.Fields(parts[0]))
+	segments := asSegmentPattern(strings.Fields(parts[1]))
+
+	return entry{signals, segments}, nil
+}
+
+// TODO: really!?
+func asSignalPattern(s []string) []signalPattern {
+	results := make([]signalPattern, len(s))
+	for i, s := range s {
+		results[i] = signalPattern(s)
+	}
+	return results
+}
+
+func asSegmentPattern(s []string) []segmentPattern {
+	results := make([]segmentPattern, len(s))
+	for i, s := range s {
+		results[i] = segmentPattern(s)
+	}
+	return results
 }
