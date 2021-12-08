@@ -37,7 +37,7 @@ fuel possible so they can make you an escape route! How much fuel must they
 spend to align to that position?
 */
 func Part2(path string) (int, error) {
-	return Part2Opts(path, Naive, ForLoop) // fastest approach on my machine
+	return Part2Opts(path, NoCache, WaitGroup) // fastest approach on my machine
 }
 
 func Part2Opts(path string, cache CacheStrategy, proc ParallelStrategy) (int, error) {
@@ -60,20 +60,8 @@ func Part2Opts(path string, cache CacheStrategy, proc ParallelStrategy) (int, er
 }
 
 func rawFuelCost(distance int) int {
-	/*
-		1 -> 1: 1
-		2 -> 3: 1 + 2
-		3 -> 6: 1 + 2 + 3
-		4 -> 10: 1 + 2 + 3 + 4
-
-		TODO: there's probably a cheaper / clever math trick to do this
-	*/
-	cost := 0
-
-	for i := 1; i <= distance; i++ {
-		cost += i
-	}
-	return cost
+	// https://en.wikipedia.org/wiki/1_%2B_2_%2B_3_%2B_4_%2B_%E2%8B%AF
+	return (distance * (distance + 1)) / 2
 }
 
 type CacheStrategy int
