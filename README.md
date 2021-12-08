@@ -135,3 +135,9 @@ Uses a vscode devcontainer for dependencies.
   juggling. Some scary docs like "A Mutex must not be copied after first use"
   that I could see creating some subtle bugs with as much implicit copying is
   going on
+
+### Day 8
+
+- type conversions are annoying; the price of having a custom type might higher
+  than I like. You can reduce the conversion by using type aliases, but then
+  you're back to "invalid receiver" if you want any methods on those types
