@@ -1,8 +1,9 @@
 package day7
 
 import (
-	"math"
+	"fmt"
 	"ryepup/advent2021/utils"
+	"sync"
 )
 
 /*
@@ -36,38 +37,160 @@ fuel possible so they can make you an escape route! How much fuel must they
 spend to align to that position?
 */
 func Part2(path string) (int, error) {
+	return Part2Opts(path, Naive, ForLoop) // fastest approach on my machine
+}
+
+func Part2Opts(path string, cache CacheStrategy, proc ParallelStrategy) (int, error) {
+	if cache == Naive && proc != ForLoop {
+		return 0, fmt.Errorf("invalid strategy combination")
+	}
+
 	positions, err := utils.ReadIntCsv(path)
 	if err != nil {
 		return 0, err
 	}
+	maxPosition := utils.MaxInt(positions...)
+	solutions := make([]int, maxPosition+1)
+	costFunction := makeFuelStrategy(cache)
+	processor := makeProcessor(proc)
 
-	target := mean(positions)
-	fuel := 0
-	for _, position := range positions {
-		distance := utils.AbsInt(position - target)
-		fuel += fuelCost(distance)
-	}
+	processor(positions, maxPosition, costFunction, solutions)
 
-	return fuel, nil
+	return utils.MinInt(solutions...), nil
 }
 
-func mean(nums []int) int {
-	sum := utils.SumInts(nums)
-	n := len(nums)
-	return int(math.Round(float64(sum) / float64(n)))
-}
-
-func fuelCost(distance int) int {
+func rawFuelCost(distance int) int {
 	/*
 		1 -> 1: 1
 		2 -> 3: 1 + 2
 		3 -> 6: 1 + 2 + 3
 		4 -> 10: 1 + 2 + 3 + 4
+
+		TODO: there's probably a cheaper / clever math trick to do this
 	*/
-	// TODO: there's probably a cheaper / clever math trick to do thi
-	if distance == 1 || distance == 0 {
-		return distance
-	} else {
-		return distance + fuelCost(distance-1)
+	cost := 0
+
+	for i := 1; i <= distance; i++ {
+		cost += i
 	}
+	return cost
+}
+
+type CacheStrategy int
+
+const (
+	NoCache CacheStrategy = iota
+	Mutex
+	RWMutex
+	Naive
+)
+
+type costFunction = func(int) int
+
+func makeFuelStrategy(strategy CacheStrategy) costFunction {
+	if strategy == NoCache {
+		return rawFuelCost
+	}
+
+	fuelCostCache := make(map[int]int)
+
+	if strategy == Naive {
+		return func(distance int) int {
+			cached, ok := fuelCostCache[distance]
+			if ok {
+				return cached
+			}
+			cost := rawFuelCost(distance)
+			fuelCostCache[distance] = cost
+			return cost
+		}
+	}
+
+	if strategy == Mutex {
+		var mutex sync.Mutex
+		return func(distance int) int {
+			mutex.Lock()
+			defer mutex.Unlock()
+			cached, ok := fuelCostCache[distance]
+			if ok {
+				return cached
+			}
+			cost := rawFuelCost(distance)
+			fuelCostCache[distance] = cost
+			return cost
+		}
+	}
+
+	if strategy == RWMutex {
+		var rwMutex sync.RWMutex
+		return func(distance int) int {
+			rwMutex.RLock()
+			cached, ok := fuelCostCache[distance]
+			rwMutex.RUnlock()
+			if ok {
+				return cached
+			}
+
+			rwMutex.Lock()
+			defer rwMutex.Unlock()
+
+			cached, ok = fuelCostCache[distance]
+			if ok {
+				return cached
+			}
+
+			cost := rawFuelCost(distance)
+			fuelCostCache[distance] = cost
+			return cost
+		}
+	}
+	return nil
+}
+
+type ParallelStrategy int
+
+const (
+	ForLoop ParallelStrategy = iota
+	WaitGroup
+)
+
+type processor = func([]int, int, costFunction, []int)
+
+func makeProcessor(strategy ParallelStrategy) processor {
+	if strategy == ForLoop {
+		return forLoopProcessor
+	}
+	if strategy == WaitGroup {
+		return waitGroupProcessor
+	}
+	return nil
+}
+
+func forLoopProcessor(positions []int, maxPosition int, cost costFunction, solutions []int) {
+	for target := 0; target <= maxPosition; target++ {
+		fuel := 0
+		for _, position := range positions {
+			distance := utils.AbsInt(position - target)
+			fuel += cost(distance)
+		}
+		solutions[target] = fuel
+	}
+}
+
+func waitGroupProcessor(positions []int, maxPosition int, cost costFunction, solutions []int) {
+	var wg sync.WaitGroup
+	for target := 0; target <= maxPosition; target++ {
+		wg.Add(1)
+		go func(target int) {
+			defer wg.Done()
+			fuel := 0
+			for _, position := range positions {
+				distance := utils.AbsInt(position - target)
+				fuel += cost(distance)
+			}
+			solutions[target] = fuel
+
+		}(target)
+	}
+	wg.Wait()
 }
