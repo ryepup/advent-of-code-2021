@@ -22,7 +22,7 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	testCases := map[string]int{"test.txt": -1, "input.txt": -1}
+	testCases := map[string]int{"test.txt": 168, "input.txt": 96361630}
 	for path, expected := range testCases {
 		t.Run(path, func(t *testing.T) {
 			if expected == -1 {
