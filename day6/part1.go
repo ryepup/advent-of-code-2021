@@ -2,7 +2,6 @@ package day6
 
 import (
 	"ryepup/advent2021/utils"
-	"strings"
 )
 
 /*
@@ -117,11 +116,7 @@ func runFishSim(path string, steps int) (int, error) {
 }
 
 func parseFish(path string) (population, error) {
-	lines, err := utils.ReadLines(path)
-	if err != nil {
-		return nil, err
-	}
-	ages, err := utils.ParseNumbers(strings.Split(lines[0], ","))
+	ages, err := utils.ReadIntCsv(path)
 	if err != nil {
 		return nil, err
 	}
