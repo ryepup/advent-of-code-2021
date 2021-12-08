@@ -116,4 +116,22 @@ Uses a vscode devcontainer for dependencies.
   just give enough primitives that the "how" also feels simple/obvious. There
   were a few times I wanted something like `sum(map.Values())` and ended up with
   a `for` loop. Writing a `.Values` function can't be done generically (yet!),
-  and isn't really worth writing over the obvious `for` loop. If it were there I'd use it, but adding it doesn't feel right
+  and isn't really worth writing over the obvious `for` loop. If it were there
+  I'd use it, but adding it doesn't feel right
+
+### Day 7
+
+- you can't add use the receiver to methods to any "basic or unnamed type"; no
+  C# style extension methods on built-ins
+- get errors writing to maps concurrently, but not slices... unless I was just
+  getting lucky
+- built-in benchmarking tools are nice; wish the unit of measure was a little
+  more useful. I have no perspective on how long a nanosecond is, and was
+  constantly multiplying to get to a unit I understood
+- goroutines are cool, but for loops are faster. I think it might be like C#
+  `Task`s, where you really only use it when there's a network hop or something
+  _really_ intense
+- locking primitives are pretty standard, `defer` helps with some of the
+  juggling. Some scary docs like "A Mutex must not be copied after first use"
+  that I could see creating some subtle bugs with as much implicit copying is
+  going on
