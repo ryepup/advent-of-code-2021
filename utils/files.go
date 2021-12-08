@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"os"
+	"strings"
 )
 
 /*
@@ -44,5 +45,18 @@ func ReadInts(path string) ([]int, error) {
 	if err != nil {
 		return nil, err
 	}
+	return results, nil
+}
+
+func ReadIntCsv(path string) ([]int, error) {
+	lines, err := ReadLines(path)
+	if err != nil {
+		return nil, err
+	}
+	results, err := ParseNumbers(strings.Split(lines[0], ","))
+	if err != nil {
+		return nil, err
+	}
+
 	return results, nil
 }
