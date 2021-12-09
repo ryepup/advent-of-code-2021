@@ -147,5 +147,11 @@ Uses a vscode devcontainer for dependencies.
 - OO is pretty hard in go; slices of custom types get weird if you need any
   conversions; this particular problem would probably be better if I stuck to
   strings
-- first day I couldn't solve the problem after a few hours, will see if I can
-  get it tomorrow
+- ~~first day I couldn't solve the problem after a few hours, will see if I can
+  get it tomorrow~~ got it, after discarding the super dynamic approach
+- lack of any set operators is tough
+- custom types are hard to work with; having to cast all the time to get access
+  to basic stuff that is only implemented for builtin types is tedious; I think
+  it might have gotten better if I thought more in terms of arrays and slices
+  and less in terms of strings / runes
+- variadic functions are ok

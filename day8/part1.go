@@ -1,9 +1,7 @@
 package day8
 
 import (
-	"fmt"
 	"ryepup/advent2021/utils"
-	"strings"
 )
 
 /*
@@ -135,13 +133,6 @@ func Part1(path string) (int, error) {
 // map of how many segments are active to what digit it is
 var segmentDigits = map[int]int{2: 1, 3: 7, 4: 4, 7: 8}
 
-type signalPattern string
-type segmentPattern string
-type entry struct {
-	signals  []signalPattern
-	segments []segmentPattern
-}
-
 func parseEntries(path string) ([]entry, error) {
 	lines, err := utils.ReadLines(path)
 	if err != nil {
@@ -149,39 +140,11 @@ func parseEntries(path string) ([]entry, error) {
 	}
 	results := make([]entry, len(lines))
 	for i, line := range lines {
-		results[i], err = parseEntry(line)
+		results[i], err = NewEntry(line)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	return results, nil
-}
-
-func parseEntry(line string) (entry, error) {
-	parts := strings.Split(line, "|")
-	if len(parts) != 2 {
-		return entry{}, fmt.Errorf("expected only one `|`, got %v", line)
-	}
-	signals := asSignalPattern(strings.Fields(parts[0]))
-	segments := asSegmentPattern(strings.Fields(parts[1]))
-
-	return entry{signals, segments}, nil
-}
-
-// TODO: really!?
-func asSignalPattern(s []string) []signalPattern {
-	results := make([]signalPattern, len(s))
-	for i, s := range s {
-		results[i] = signalPattern(s)
-	}
-	return results
-}
-
-func asSegmentPattern(s []string) []segmentPattern {
-	results := make([]segmentPattern, len(s))
-	for i, s := range s {
-		results[i] = segmentPattern(s)
-	}
-	return results
 }
