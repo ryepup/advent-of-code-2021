@@ -155,3 +155,8 @@ Uses a vscode devcontainer for dependencies.
   it might have gotten better if I thought more in terms of arrays and slices
   and less in terms of strings / runes
 - variadic functions are ok
+- the parser has some suprising rules around where you can use newlines to break
+  a long line; they do automatic terminator insertion and you can get some funky
+  errors if the parser is deciding to end your expression early
+- also don't use `case` as a variable name; the parser doesn't seem to have much
+  context and will wig out with nonsense errors
