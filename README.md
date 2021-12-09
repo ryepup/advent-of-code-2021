@@ -135,3 +135,23 @@ Uses a vscode devcontainer for dependencies.
   juggling. Some scary docs like "A Mutex must not be copied after first use"
   that I could see creating some subtle bugs with as much implicit copying is
   going on
+
+### Day 8
+
+- type conversions are annoying; the price of having a custom type might higher
+  than I like. You can reduce the conversion by using type aliases, but then
+  you're back to "invalid receiver" if you want any methods on those types
+- I couldn't find `char` because it's called `rune` (I initially assumed it was
+  another case of "go thinks you don't need that"). `rune` is a nicer name
+  anyhow in a multi-byte UTF-8 world
+- OO is pretty hard in go; slices of custom types get weird if you need any
+  conversions; this particular problem would probably be better if I stuck to
+  strings
+- ~~first day I couldn't solve the problem after a few hours, will see if I can
+  get it tomorrow~~ got it, after discarding the super dynamic approach
+- lack of any set operators is tough
+- custom types are hard to work with; having to cast all the time to get access
+  to basic stuff that is only implemented for builtin types is tedious; I think
+  it might have gotten better if I thought more in terms of arrays and slices
+  and less in terms of strings / runes
+- variadic functions are ok
