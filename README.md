@@ -141,3 +141,11 @@ Uses a vscode devcontainer for dependencies.
 - type conversions are annoying; the price of having a custom type might higher
   than I like. You can reduce the conversion by using type aliases, but then
   you're back to "invalid receiver" if you want any methods on those types
+- I couldn't find `char` because it's called `rune` (I initially assumed it was
+  another case of "go thinks you don't need that"). `rune` is a nicer name
+  anyhow in a multi-byte UTF-8 world
+- OO is pretty hard in go; slices of custom types get weird if you need any
+  conversions; this particular problem would probably be better if I stuck to
+  strings
+- first day I couldn't solve the problem after a few hours, will see if I can
+  get it tomorrow
